@@ -25,7 +25,7 @@ defineProps<{
       <!-- Body -->
       <div
         v-if="incorrectGuesses >= 2"
-        class="absolute top-20 right-1/4 transform -translate-x-1/2 w-2 h-16 bg-cyan-400 animate-fade-in"
+        class="absolute top-20 right-1/4 transform -translate-x-7 w-2 h-16 bg-cyan-400 animate-fade-in"
       ></div>
       <!-- Left Arm -->
       <div
