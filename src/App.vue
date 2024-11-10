@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DialogPortal,
+  DialogOverlay,
 } from "radix-vue";
 import HangmanDrawing from "./components/HangmanDrawing.vue";
 import Keyboard from "./components/Keyboard.vue";
@@ -14,7 +16,7 @@ const word = ref("");
 const guessedLetters = ref<string[]>([]);
 const incorrectGuesses = ref(0);
 const gameStatus = ref<"playing" | "won" | "lost">("playing");
-const highScore = useStorage("hangman-highscore", 0);
+const highScore = ref(0);
 const hintButtonVisible = ref(true);
 
 const fetchRandomWord = async () => {
@@ -57,7 +59,12 @@ const handleGuess = (letter: string) => {
 
   if (isWinner.value) {
     gameStatus.value = "won";
-    const score = Math.max(0, 100 - incorrectGuesses.value * 10);
+    const baseScore = 100;
+    const lengthBonus = word.value.length * 5;
+    const score = Math.max(
+      0,
+      baseScore + lengthBonus - incorrectGuesses.value * 10,
+    );
     if (score > highScore.value) {
       highScore.value = score;
     }
@@ -133,24 +140,37 @@ onMounted(async () => {
       />
 
       <DialogRoot :open="gameStatus !== 'playing'" modal>
-        <DialogContent class="bg-purple-900 p-6 rounded-lg shadow-neon">
-          <DialogTitle class="text-3xl font-bold mb-4">
-            {{ gameStatus === "won" ? "🎉 Congratulations!" : "💀 Game Over" }}
-          </DialogTitle>
-          <p class="mb-4">
-            {{
-              gameStatus === "won"
-                ? `You won! Score: ${Math.max(0, 100 - incorrectGuesses * 10)}`
-                : `The word was: ${word}`
-            }}
-          </p>
-          <button
-            @click="resetGame"
-            class="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded transition-colors"
+        <DialogPortal>
+          <DialogOverlay
+            class="bg-gray-800 bg-opacity-40 data-[state=open]:animate-overlayShow fixed inset-0 z-30"
+          />
+
+          <DialogContent
+            class="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-[100]"
           >
-            Play Again
-          </button>
-        </DialogContent>
+            <DialogTitle class="text-3xl font-bold mb-4">
+              {{
+                gameStatus === "won" ? "🎉 Congratulations!" : "💀 Game Over"
+              }}
+            </DialogTitle>
+            <p class="mb-4">
+              {{
+                gameStatus === "won"
+                  ? `You won! Score: ${Math.max(
+                      0,
+                      100 - incorrectGuesses * 10,
+                    )}`
+                  : `The word was: ${word}`
+              }}
+            </p>
+            <button
+              @click="resetGame"
+              class="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded transition-colors"
+            >
+              Play Again
+            </button>
+          </DialogContent>
+        </DialogPortal>
       </DialogRoot>
     </div>
   </div>
