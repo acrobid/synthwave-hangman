@@ -11,13 +11,26 @@ import {
 import HangmanDrawing from "./components/HangmanDrawing.vue";
 import Keyboard from "./components/Keyboard.vue";
 import { useStorage } from "@vueuse/core";
+import confetti from "canvas-confetti";
 
-const word = ref("");
+const word = ref("MINECRAFT");
 const guessedLetters = ref<string[]>([]);
 const incorrectGuesses = ref(0);
 const gameStatus = ref<"playing" | "won" | "lost">("playing");
 const highScore = ref(0);
 const hintButtonVisible = ref(true);
+
+function triggerConfetti({
+  particleCount = 100,
+  spread = 70,
+  origin = { y: 0.6 },
+} = {}) {
+  confetti({
+    particleCount,
+    spread,
+    origin,
+  });
+}
 
 const fetchRandomWord = async () => {
   try {
@@ -54,10 +67,16 @@ const handleGuess = (letter: string) => {
       if (incorrectGuesses.value >= 6) {
         gameStatus.value = "lost";
       }
+    } else {
+      for (let i = 0; i < 10; i++) {
+        triggerConfetti();
+      }
     }
   }
 
   if (isWinner.value) {
+    triggerWinConfetti();
+
     gameStatus.value = "won";
     const baseScore = 100;
     const lengthBonus = word.value.length * 5;
@@ -70,6 +89,22 @@ const handleGuess = (letter: string) => {
     }
   }
 };
+
+function triggerWinConfetti() {
+  const confettiDuration = 5000;
+  const confettiInterval = 100;
+  const confettiCount = confettiDuration / confettiInterval;
+
+  for (let i = 0; i < confettiCount; i++) {
+    setTimeout(() => {
+      triggerConfetti({
+        particleCount: Math.floor(Math.random() * 50) + 50,
+        spread: Math.floor(Math.random() * 50) + 50,
+        origin: { y: Math.random() * 0.4 + 0.3 },
+      });
+    }, i * confettiInterval);
+  }
+}
 
 const revealHint = () => {
   if (gameStatus.value !== "playing") return;
