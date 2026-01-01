@@ -6,64 +6,108 @@ defineProps<{
 
 <template>
   <div class="grid place-items-center">
-    Incorrect Guesses: {{ incorrectGuesses }}
-    <div class="relative w-48 h-48">
-      <!-- Base -->
-      <div class="absolute bottom-0 w-full h-2 bg-pink-500"></div>
-      <!-- Pole -->
-      <div class="absolute bottom-0 left-1/4 w-2 h-full bg-pink-500"></div>
-      <!-- Top -->
-      <div class="absolute top-0 left-1/4 w-24 h-2 bg-pink-500"></div>
-      <!-- Rope -->
-      <div class="absolute top-0 right-1/4 w-2 h-12 bg-pink-500"></div>
+    <div class="text-sm text-pink-200 mb-2">Incorrect Guesses: {{ incorrectGuesses }}</div>
+
+    <svg
+      class="hangman-svg"
+      viewBox="0 0 120 160"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Hangman drawing"
+    >
+      <!-- Gallows -->
+      <line x1="10" y1="150" x2="110" y2="150" class="gallows" />
+      <line x1="30" y1="150" x2="30" y2="10" class="gallows" />
+      <line x1="30" y1="10" x2="80" y2="10" class="gallows" />
+      <line x1="80" y1="10" x2="80" y2="30" class="gallows" />
 
       <!-- Head -->
-      <div
+      <circle
         v-if="incorrectGuesses >= 1"
-        class="absolute top-12 right-1/4 transform -translate-x-1/2 w-8 h-8 rounded-full border-4 border-cyan-400 animate-fade-in"
-      ></div>
+        cx="80"
+        cy="44"
+        r="12"
+        class="hangman-part visible"
+      />
+
       <!-- Body -->
-      <div
+      <line
         v-if="incorrectGuesses >= 2"
-        class="absolute top-20 right-1/4 transform -translate-x-7 w-2 h-16 bg-cyan-400 animate-fade-in"
-      ></div>
-      <!-- Left Arm -->
-      <div
+        x1="80"
+        y1="56"
+        x2="80"
+        y2="100"
+        class="hangman-part visible"
+      />
+
+      <!-- Left arm -->
+      <line
         v-if="incorrectGuesses >= 3"
-        class="absolute top-24 right-1/4 transform -translate-x-1/2 w-8 h-2 bg-cyan-400 rotate-45 origin-right animate-fade-in"
-      ></div>
-      <!-- Right Arm -->
-      <div
+        x1="80"
+        y1="68"
+        x2="62"
+        y2="86"
+        class="hangman-part visible"
+      />
+
+      <!-- Right arm -->
+      <line
         v-if="incorrectGuesses >= 4"
-        class="absolute top-24 right-1/4 transform -translate-x-1/2 w-8 h-2 bg-cyan-400 -rotate-45 origin-left animate-fade-in"
-      ></div>
-      <!-- Left Leg -->
-      <div
+        x1="80"
+        y1="68"
+        x2="98"
+        y2="86"
+        class="hangman-part visible"
+      />
+
+      <!-- Left leg -->
+      <line
         v-if="incorrectGuesses >= 5"
-        class="absolute top-36 right-1/4 transform -translate-x-1/2 w-8 h-2 bg-cyan-400 rotate-45 origin-right animate-fade-in"
-      ></div>
-      <!-- Right Leg -->
-      <div
+        x1="80"
+        y1="100"
+        x2="66"
+        y2="130"
+        class="hangman-part visible"
+      />
+
+      <!-- Right leg -->
+      <line
         v-if="incorrectGuesses >= 6"
-        class="absolute top-36 right-1/4 transform -translate-x-1/2 w-8 h-2 bg-cyan-400 -rotate-45 origin-left animate-fade-in"
-      ></div>
-    </div>
+        x1="80"
+        y1="100"
+        x2="94"
+        y2="130"
+        class="hangman-part visible"
+      />
+    </svg>
   </div>
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in;
+.hangman-svg {
+  width: 10rem;
+  height: 12rem;
+  overflow: visible;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8) translateX(-50%);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateX(-50%);
-  }
+.gallows {
+  stroke: #ff4da6; /* pink */
+  stroke-width: 4;
+  stroke-linecap: round;
 }
-</style>
+
+.hangman-part {
+  stroke: #00fff0; /* cyan */
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  opacity: 0;
+  transform-origin: center;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.hangman-part.visible {
+  opacity: 1;
+  transform: none;
+}</style>
