@@ -6,7 +6,9 @@ defineProps<{
 
 <template>
   <div class="grid place-items-center">
-    <div class="text-sm text-pink-200 mb-2">Incorrect Guesses: {{ incorrectGuesses }}</div>
+    <div class="text-sm text-pink-200 mb-2">
+      Incorrect Guesses: {{ incorrectGuesses }}
+    </div>
 
     <svg
       class="hangman-svg"
@@ -110,4 +112,5 @@ defineProps<{
 .hangman-part.visible {
   opacity: 1;
   transform: none;
-}</style>
+}
+</style>
